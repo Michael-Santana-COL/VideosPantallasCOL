@@ -3,36 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reproducción de Video</title>
+  <title>Reproducción de Contenido</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      width: 100%;
       background: black;
       overflow: hidden;
     }
-    iframe {
+
+    #container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+
+    iframe, img {
       width: 100%;
       height: 100%;
       border: none;
+      background: black;
+    }
+
+    img {
+      object-fit: contain;
+    }
+
+    .error {
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 20%;
+      font-size: 1.2rem;
     }
   </style>
 </head>
 <body>
-  <iframe id="ytPlayer" allow="autoplay" allowfullscreen></iframe>
+  <div id="container"></div>
+
   <script>
-    function getVideoIdFromURL() {
+    function getParams() {
       const params = new URLSearchParams(window.location.search);
-      return params.get('video_id');
+      return {
+        type: params.get("type"),
+        source: params.get("source")
+      };
     }
 
-    const videoId = getVideoIdFromURL();
-    if (videoId) {
-      const iframe = document.getElementById('ytPlayer');
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&rel=0&modestbranding=1`;
+    const { type, source } = getParams();
+    const container = document.getElementById("container");
+
+    if (!type || !source) {
+      container.innerHTML = '<div class="error">No se proporcionó contenido válido.</div>';
+    } else if (type === "video") {
+      const iframe = document.createElement("iframe");
+      iframe.allow = "autoplay";
+      iframe.allowFullscreen = true;
+      iframe.src = `https://www.youtube.com/embed/${source}?autoplay=1&loop=1&playlist=${source}&controls=0&mute=1&rel=0&modestbranding=1`;
+      container.appendChild(iframe);
+    } else if (type === "image") {
+      const img = document.createElement("img");
+      img.src = source;
+      img.alt = "Imagen de pantalla";
+      container.appendChild(img);
     } else {
-      document.body.innerHTML = '<p style="color:white;text-align:center;padding-top:20%">No se proporcionó un video_id.</p>';
+      container.innerHTML = '<div class="error">Tipo de contenido no soportado.</div>';
     }
   </script>
 </body>
