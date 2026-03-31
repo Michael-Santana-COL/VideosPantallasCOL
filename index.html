@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Selector de Videos - Pantallas Oficina</title>
+  <title>Selector de Contenido - Pantallas Oficina</title>
   <style>
     body {
       margin: 0;
@@ -15,14 +15,17 @@
       align-items: center;
       min-height: 100vh;
     }
+
     header {
       padding: 2rem;
       text-align: center;
     }
+
     h1 {
       font-size: 2.5rem;
       margin: 0;
     }
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -31,26 +34,33 @@
       max-width: 1200px;
       padding-bottom: 4rem;
     }
+
     .card {
       background: #333;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       transition: transform 0.2s ease;
+      cursor: pointer;
     }
+
     .card:hover {
       transform: scale(1.03);
     }
+
     .thumbnail {
       width: 100%;
       aspect-ratio: 16/9;
       object-fit: cover;
+      display: block;
     }
+
     .title {
       padding: 1rem;
       font-size: 1.2rem;
       text-align: center;
     }
+
     @media (hover: none) {
       .card:hover {
         transform: none;
@@ -61,42 +71,83 @@
 <body>
   <header>
     <h1>Cruise On Land</h1>
-    <h2>Seleccione el video de pantalla</h2>
-  </header>  
-  <main class="gallery">
-     <div class="card" onclick="goToPlayer('4j-Z6pCooHo')">
-      <img class="thumbnail" src="https://img.youtube.com/vi/4j-Z6pCooHo/hqdefault.jpg" alt="Video 2">
-      <div class="title">Video Renders Stand Col Septiembre 2025</div>
-    </div>
-      <div class="card" onclick="goToPlayer('P-LzCCivdaE')">
-      <img class="thumbnail" src="https://img.youtube.com/vi/P-LzCCivdaE/hqdefault.jpg" alt="Video 2">
-      <div class="title">Locations COL</div>
-    </div>
-    <div class="card" onclick="goToPlayer('9CJo8RSiFPE')">
-      <img class="thumbnail" src="https://img.youtube.com/vi/9CJo8RSiFPE/hqdefault.jpg" alt="Video 2">
-      <div class="title">Avance de Obra Col Junio 2025</div>
-    </div>
-    <div class="card" onclick="goToPlayer('eNj2uvRBs3Y')">
-      <img class="thumbnail" src="https://img.youtube.com/vi/eNj2uvRBs3Y/hqdefault.jpg" alt="Video Principal">
-      <div class="title">Video Loop Pantallas - 11/06/2025</div>
-    </div>
-    <div class="card" onclick="goToPlayer('52wEXU2iRAQ')">
-      <img class="thumbnail" src="https://img.youtube.com/vi/52wEXU2iRAQ/hqdefault.jpg" alt="Video 2">
-      <div class="title">Video largo Renders Amenidades 27/05/2025</div>
-    </div>
-    <div class="card" onclick="goToPlayer('uPq7Lu4e26c')">
-      <img class="thumbnail" src="https://img.youtube.com/vi/uPq7Lu4e26c/hqdefault.jpg" alt="Video 3">
-      <div class="title">Video loop 16/04/2025</div>
-    </div>
-  </main>
+    <h2>Seleccione el contenido de pantalla</h2>
+  </header>
+
+  <main class="gallery" id="gallery"></main>
+
   <script>
-    function goToPlayer(videoId) {
-      window.location.href = `player.html?video_id=${videoId}`;
+    const items = [
+      {
+        type: "video",
+        title: "Video Renders Stand Col Septiembre 2025",
+        source: "4j-Z6pCooHo",
+        thumbnail: "https://img.youtube.com/vi/4j-Z6pCooHo/hqdefault.jpg"
+      },
+      {
+        type: "video",
+        title: "Locations COL",
+        source: "P-LzCCivdaE",
+        thumbnail: "https://img.youtube.com/vi/P-LzCCivdaE/hqdefault.jpg"
+      },
+      {
+        type: "video",
+        title: "Avance de Obra Col Junio 2025",
+        source: "9CJo8RSiFPE",
+        thumbnail: "https://img.youtube.com/vi/9CJo8RSiFPE/hqdefault.jpg"
+      },
+      {
+        type: "video",
+        title: "Video Loop Pantallas - 11/06/2025",
+        source: "eNj2uvRBs3Y",
+        thumbnail: "https://img.youtube.com/vi/eNj2uvRBs3Y/hqdefault.jpg"
+      },
+      {
+        type: "video",
+        title: "Video largo Renders Amenidades 27/05/2025",
+        source: "52wEXU2iRAQ",
+        thumbnail: "https://img.youtube.com/vi/52wEXU2iRAQ/hqdefault.jpg"
+      },
+      {
+        type: "video",
+        title: "Video loop 16/04/2025",
+        source: "uPq7Lu4e26c",
+        thumbnail: "https://img.youtube.com/vi/uPq7Lu4e26c/hqdefault.jpg"
+      },
+
+      {
+        type: "image",
+        title: "Promo Octubre 2025",
+        source: "media/promo-octubre.jpg",
+        thumbnail: "media/promo-octubre.jpg"
+      },
+      {
+        type: "image",
+        title: "Menú Especial",
+        source: "media/menu-especial.png",
+        thumbnail: "media/menu-especial.png"
+      }
+    ];
+
+    function goToPlayer(item) {
+      const url = `player.html?type=${encodeURIComponent(item.type)}&source=${encodeURIComponent(item.source)}`;
+      window.location.href = url;
     }
+
+    const gallery = document.getElementById("gallery");
+
+    items.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.onclick = () => goToPlayer(item);
+
+      card.innerHTML = `
+        <img class="thumbnail" src="${item.thumbnail}" alt="${item.title}">
+        <div class="title">${item.title}</div>
+      `;
+
+      gallery.appendChild(card);
+    });
   </script>
 </body>
 </html>
-
-
-
-
